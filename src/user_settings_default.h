@@ -65,11 +65,11 @@ extern "C" {
 #if 1
     #define WOLFSSL_SP
     #define WOLFSSL_SP_SMALL      /* use smaller version of code */
-    // #define WOLFSSL_HAVE_SP_RSA
-    // #define WOLFSSL_HAVE_SP_DH
-    // #define WOLFSSL_HAVE_SP_ECC
+    #define WOLFSSL_HAVE_SP_RSA
+    #define WOLFSSL_HAVE_SP_DH
+    #define WOLFSSL_HAVE_SP_ECC
     //#define WOLFSSL_SP_CACHE_RESISTANT
-    // #define WOLFSSL_SP_MATH     /* only SP math - eliminates fast math code */
+    #define WOLFSSL_SP_MATH     /* only SP math - eliminates fast math code */
 
     /* SP Assembly Speedups */
     #define WOLFSSL_SP_ASM      /* required if using the ASM versions */
@@ -122,9 +122,7 @@ extern "C" {
     #endif
 
     /* RSA PSS Support */
-    #if 0
-        #define WC_RSA_PSS
-    #endif
+    #define WC_RSA_PSS
 
     #if 0
         #define WC_RSA_NO_PADDING
@@ -165,7 +163,7 @@ extern "C" {
     /* Optional ECC calculation method */
     /* Note: doubles heap usage, but slightly faster */
     #undef  ECC_SHAMIR
-    #define ECC_SHAMIR
+    // #define ECC_SHAMIR
 
     /* Reduces heap usage, but slower */
     #undef  ECC_TIMING_RESISTANT
@@ -213,10 +211,10 @@ extern "C" {
 #undef  NO_DH
 #if 1
     /* Use table for DH instead of -lm (math) lib dependency */
-    #if 0
+    #if 1
         #define WOLFSSL_DH_CONST
         #define HAVE_FFDHE_2048
-        #define HAVE_FFDHE_4096
+        // #define HAVE_FFDHE_4096
         //#define HAVE_FFDHE_6144
         //#define HAVE_FFDHE_8192
     #endif
@@ -298,7 +296,7 @@ extern "C" {
 #undef NO_SHA
 #if 1
     /* 1k smaller, but 25% slower */
-    //#define USE_SLOW_SHA
+    #define USE_SLOW_SHA
 #else
     #define NO_SHA
 #endif
@@ -307,7 +305,7 @@ extern "C" {
 #undef NO_SHA256
 #if 1
     /* not unrolled - ~2k smaller and ~25% slower */
-    //#define USE_SLOW_SHA256
+    #define USE_SLOW_SHA256
 
     /* Sha224 */
     #if 0
@@ -344,9 +342,7 @@ extern "C" {
 
 /* HKDF */
 #undef HAVE_HKDF
-#if 0
-    #define HAVE_HKDF
-#endif
+#define HAVE_HKDF
 
 /* CMAC */
 #undef WOLFSSL_CMAC
@@ -377,7 +373,7 @@ extern "C" {
 /* ------------------------------------------------------------------------- */
 
 #undef DEBUG_WOLFSSL
-#define DEBUG_WOLFSSL
+// #define DEBUG_WOLFSSL
 
 #undef NO_ERROR_STRINGS
 // #define NO_ERROR_STRINGS
@@ -453,7 +449,7 @@ void *rt_realloc(void *ptr, unsigned long nbytes);
 /* ------------------------------------------------------------------------- */
 
 /* Override Current Time */
-#include "time.h"
+#include <time.h>
 /* Allows custom "custom_time()" function to be used for benchmark */
 #define WOLFSSL_USER_CURRTIME
 #define WOLFSSL_GMTIME
@@ -530,9 +526,7 @@ extern time_t user_XTime(time_t *timer);
 /* Enable Features */
 /* ------------------------------------------------------------------------- */
 #undef WOLFSSL_TLS13
-#if 0
-    #define WOLFSSL_TLS13
-#endif
+#define WOLFSSL_TLS13
 
 #undef WOLFSSL_KEY_GEN
 #if 0
@@ -570,16 +564,16 @@ extern time_t user_XTime(time_t *timer);
 /* Disable Features */
 /* ------------------------------------------------------------------------- */
 #undef  NO_WOLFSSL_SERVER
-//#define NO_WOLFSSL_SERVER
+#define NO_WOLFSSL_SERVER
 
 #undef  NO_WOLFSSL_CLIENT
 //#define NO_WOLFSSL_CLIENT
 
 #undef  NO_CRYPT_TEST
-//#define NO_CRYPT_TEST
+#define NO_CRYPT_TEST
 
 #undef  NO_CRYPT_BENCHMARK
-//#define NO_CRYPT_BENCHMARK
+#define NO_CRYPT_BENCHMARK
 
 #undef  WOLFCRYPT_ONLY
 //#define WOLFCRYPT_ONLY
