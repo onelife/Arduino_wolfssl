@@ -25,59 +25,44 @@ extern "C" {
 #endif
 #define WOLFSSL_STM32_CUBEMX
 
-// #define NO_WOLFSSL_DIR
 #define WOLFSSL_IGNORE_FILE_WARN
 
 
 /* ------------------------------------------------------------------------- */
 /* Platform */
 /* ------------------------------------------------------------------------- */
-#undef  WOLFSSL_GENERAL_ALIGNMENT
-#define WOLFSSL_GENERAL_ALIGNMENT   4
-
-#undef  SINGLE_THREADED
+#define WOLFSSL_GENERAL_ALIGNMENT 4
 #define SINGLE_THREADED
-
-#undef  WOLFSSL_SMALL_STACK
 #define WOLFSSL_SMALL_STACK
-
-#undef  WOLFSSL_USER_IO
 #define WOLFSSL_USER_IO
 
 
 /* ------------------------------------------------------------------------- */
 /* Math Configuration */
 /* ------------------------------------------------------------------------- */
-#undef  SIZEOF_LONG_LONG
 #define SIZEOF_LONG_LONG 8
-
-#undef USE_FAST_MATH
 #define USE_FAST_MATH
-
-#undef  TFM_TIMING_RESISTANT
 #define TFM_TIMING_RESISTANT
 
 /* Optimizations */
 // #define TFM_ARM
 
 /* Wolf Single Precision Math */
-#undef WOLFSSL_SP
-#if 1
-    #define WOLFSSL_SP
-    #define WOLFSSL_SP_SMALL      /* use smaller version of code */
-    #define WOLFSSL_HAVE_SP_RSA
-    #define WOLFSSL_HAVE_SP_DH
-    #define WOLFSSL_HAVE_SP_ECC
-    //#define WOLFSSL_SP_CACHE_RESISTANT
-    #define WOLFSSL_SP_MATH     /* only SP math - eliminates fast math code */
+#define WOLFSSL_SP
+#define WOLFSSL_SP_SMALL        /* use smaller version of code */
+#define WOLFSSL_HAVE_SP_RSA
+#define WOLFSSL_HAVE_SP_DH
+#define WOLFSSL_HAVE_SP_ECC
+//#define WOLFSSL_SP_CACHE_RESISTANT
+#define WOLFSSL_SP_MATH         /* only SP math - eliminates fast math code */
 
-    /* SP Assembly Speedups */
-    #define WOLFSSL_SP_ASM      /* required if using the ASM versions */
-    //#define WOLFSSL_SP_ARM32_ASM
-    //#define WOLFSSL_SP_ARM64_ASM
-    //#define WOLFSSL_SP_ARM_THUMB_ASM
-    #define WOLFSSL_SP_ARM_CORTEX_M_ASM
-#endif
+/* SP Assembly Speedups */
+#define WOLFSSL_SP_ASM          /* required if using the ASM versions */
+//#define WOLFSSL_SP_ARM32_ASM
+//#define WOLFSSL_SP_ARM64_ASM
+//#define WOLFSSL_SP_ARM_THUMB_ASM
+#define WOLFSSL_SP_ARM_CORTEX_M_ASM
+
 
 /* ------------------------------------------------------------------------- */
 /* FIPS - Requires eval or license from wolfSSL */
@@ -382,10 +367,6 @@ extern "C" {
 extern void rt_kprintf(const char *fmt, ...);
 #define user_log(msg) rt_kprintf("%s\n", msg)
 #define WOLFSSL_USER_LOG user_log
-
-// int snprintf ( char * s, size_t n, const char * format, ...)
-
-// # define ADD_FINSH_CMD(...) ADD_SHELL_CMD("", __VA_ARGS__)
 
 #define XPRINTF rt_kprintf
 

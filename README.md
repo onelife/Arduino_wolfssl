@@ -1,6 +1,7 @@
-<a href="https://repology.org/project/wolfssl/versions">
-    <img src="https://repology.org/badge/vertical-allrepos/wolfssl.svg" alt="Packaging status" align="right">
-</a>
+# Arduino wolfSSL Library
+
+The library is modified from wolfSSL Release 4.7.0 for Arduino platform.
+
 
 # wolfSSL Embedded SSL/TLS Library
 
