@@ -11,58 +11,72 @@
 extern "C" {
 #endif
 
+
+/* ------------------------------------------------------------------------- */
+/* Platform */
+/* ------------------------------------------------------------------------- */
 #if (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+    #undef  LITTLE_ENDIAN_ORDER
     #define BIG_ENDIAN_ORDER
 #else
     #undef  BIG_ENDIAN_ORDER
     #define LITTLE_ENDIAN_ORDER
 #endif
 
-#ifdef STM32F7xx
-    #define WOLFSSL_STM32F7
-    #define NO_STM32_CRYPTO
-    #define NO_STM32_HASH
-#endif
-#define WOLFSSL_STM32_CUBEMX
+#undef  WOLFSSL_GENERAL_ALIGNMENT
+#define WOLFSSL_GENERAL_ALIGNMENT   4
 
-#define WOLFSSL_IGNORE_FILE_WARN
-
-
-/* ------------------------------------------------------------------------- */
-/* Platform */
-/* ------------------------------------------------------------------------- */
-#define WOLFSSL_GENERAL_ALIGNMENT 4
+#undef  SINGLE_THREADED
 #define SINGLE_THREADED
+
+#undef  WOLFSSL_SMALL_STACK
 #define WOLFSSL_SMALL_STACK
+
+#undef  WOLFSSL_USER_IO
 #define WOLFSSL_USER_IO
+
+#undef  WOLFSSL_IGNORE_FILE_WARN
+#define WOLFSSL_IGNORE_FILE_WARN
 
 
 /* ------------------------------------------------------------------------- */
 /* Math Configuration */
 /* ------------------------------------------------------------------------- */
+#undef  SIZEOF_LONG_LONG
 #define SIZEOF_LONG_LONG 8
-#define USE_FAST_MATH
-#define TFM_TIMING_RESISTANT
 
-/* Optimizations */
-// #define TFM_ARM
+#undef  CHAR_BIT
+#define CHAR_BIT 8
+
+#undef USE_FAST_MATH
+#if 1
+    #define USE_FAST_MATH
+
+    #undef  TFM_TIMING_RESISTANT
+    #define TFM_TIMING_RESISTANT
+
+    /* Optimizations */
+    //#define TFM_ARM
+#endif
 
 /* Wolf Single Precision Math */
-#define WOLFSSL_SP
-#define WOLFSSL_SP_SMALL        /* use smaller version of code */
-#define WOLFSSL_HAVE_SP_RSA
-#define WOLFSSL_HAVE_SP_DH
-#define WOLFSSL_HAVE_SP_ECC
-//#define WOLFSSL_SP_CACHE_RESISTANT
-#define WOLFSSL_SP_MATH         /* only SP math - eliminates fast math code */
+#undef WOLFSSL_SP
+#if 1
+    #define WOLFSSL_SP
+    #define WOLFSSL_SP_SMALL      /* use smaller version of code */
+    #define WOLFSSL_HAVE_SP_RSA
+    #define WOLFSSL_HAVE_SP_DH
+    #define WOLFSSL_HAVE_SP_ECC
+    //#define WOLFSSL_SP_CACHE_RESISTANT
+    #define WOLFSSL_SP_MATH     /* only SP math - eliminates fast math code */
 
-/* SP Assembly Speedups */
-#define WOLFSSL_SP_ASM          /* required if using the ASM versions */
-//#define WOLFSSL_SP_ARM32_ASM
-//#define WOLFSSL_SP_ARM64_ASM
-//#define WOLFSSL_SP_ARM_THUMB_ASM
-#define WOLFSSL_SP_ARM_CORTEX_M_ASM
-
+    /* SP Assembly Speedups */
+    #define WOLFSSL_SP_ASM      /* required if using the ASM versions */
+    //#define WOLFSSL_SP_ARM32_ASM
+    //#define WOLFSSL_SP_ARM64_ASM
+    //#define WOLFSSL_SP_ARM_THUMB_ASM
+    #define WOLFSSL_SP_ARM_CORTEX_M_ASM
+#endif
 
 /* ------------------------------------------------------------------------- */
 /* FIPS - Requires eval or license from wolfSSL */
@@ -107,7 +121,9 @@ extern "C" {
     #endif
 
     /* RSA PSS Support */
-    #define WC_RSA_PSS
+    #if 1
+        #define WC_RSA_PSS
+    #endif
 
     #if 0
         #define WC_RSA_NO_PADDING
@@ -323,11 +339,17 @@ extern "C" {
 
 /* MD5 */
 #undef  NO_MD5
-// #define NO_MD5
+#if 0
+
+#else
+    #define NO_MD5
+#endif
 
 /* HKDF */
 #undef HAVE_HKDF
-#define HAVE_HKDF
+#if 1
+    #define HAVE_HKDF
+#endif
 
 /* CMAC */
 #undef WOLFSSL_CMAC
@@ -358,17 +380,14 @@ extern "C" {
 /* ------------------------------------------------------------------------- */
 
 #undef DEBUG_WOLFSSL
-// #define DEBUG_WOLFSSL
-
 #undef NO_ERROR_STRINGS
-// #define NO_ERROR_STRINGS
-
-#undef WOLFSSL_USER_LOG
-extern void rt_kprintf(const char *fmt, ...);
-#define user_log(msg) rt_kprintf("%s\n", msg)
-#define WOLFSSL_USER_LOG user_log
-
-#define XPRINTF rt_kprintf
+#if 0
+    #define DEBUG_WOLFSSL
+#else
+    #if 0
+        #define NO_ERROR_STRINGS
+    #endif
+#endif
 
 
 /* ------------------------------------------------------------------------- */
@@ -376,22 +395,20 @@ extern void rt_kprintf(const char *fmt, ...);
 /* ------------------------------------------------------------------------- */
 
 /* Override Memory API's */
-#undef  XMALLOC_OVERRIDE
-#define XMALLOC_OVERRIDE
+#if 1
+    #undef  XMALLOC_OVERRIDE
+    #define XMALLOC_OVERRIDE
 
-/* prototypes for user heap override functions */
-/* Note: Realloc only required for normal math */
-// #include <stddef.h>  /* for size_t */
-// extern void *myMalloc(size_t n, void* heap, int type);
-// extern void myFree(void *p, void* heap, int type);
-// extern void *myRealloc(void *p, size_t n, void* heap, int type);
-void *rt_malloc(unsigned long nbytes);
-void rt_free(void *ptr);
-void *rt_realloc(void *ptr, unsigned long nbytes);
+    /* prototypes for user heap override functions */
+    /* Note: Realloc only required for normal math */
+    extern void *user_malloc(unsigned long n);
+    extern void user_free(void *p);
+    extern void *user_realloc(void *p, unsigned long n);
 
-#define XMALLOC(n, h, t)     rt_malloc(n)
-#define XFREE(p, h, t)       rt_free(p)
-#define XREALLOC(p, n, h, t) rt_realloc(p, n)
+    #define XMALLOC(n, h, t)     user_malloc(n)
+    #define XFREE(p, h, t)       user_free(p)
+    #define XREALLOC(p, n, h, t) user_realloc(p, n)
+#endif
 
 #if 0
     /* Static memory requires fast math */
@@ -430,8 +447,8 @@ void *rt_realloc(void *ptr, unsigned long nbytes);
 /* ------------------------------------------------------------------------- */
 
 /* Override Current Time */
-#include <time.h>
 /* Allows custom "custom_time()" function to be used for benchmark */
+#include <time.h>  /* for time_t */
 #define WOLFSSL_USER_CURRTIME
 #define WOLFSSL_GMTIME
 #define USER_TICKS
@@ -451,19 +468,19 @@ extern time_t user_XTime(time_t *timer);
 // #define CUSTOM_RAND_GENERATE  my_rng_seed_gen
 
 /* Choose RNG method */
-#if 0
+#if 1
     /* Use built-in P-RNG (SHA256 based) with HW RNG */
     /* P-RNG + HW RNG (P-RNG is ~8K) */
     #undef  HAVE_HASHDRBG
-    #define HAVE_HASHDRBG
+    // #define HAVE_HASHDRBG
 #else
-    // #undef  WC_NO_HASHDRBG
-    // #define WC_NO_HASHDRBG
+    #undef  WC_NO_HASHDRBG
+    #define WC_NO_HASHDRBG
 
-    // /* Bypass P-RNG and use only HW RNG */
-    // extern int my_rng_gen_block(unsigned char* output, unsigned int sz);
-    // #undef  CUSTOM_RAND_GENERATE_BLOCK
-    // #define CUSTOM_RAND_GENERATE_BLOCK  my_rng_gen_block
+    /* Bypass P-RNG and use only HW RNG */
+    extern int my_rng_gen_block(unsigned char* output, unsigned int sz);
+    #undef  CUSTOM_RAND_GENERATE_BLOCK
+    #define CUSTOM_RAND_GENERATE_BLOCK  my_rng_gen_block
 #endif
 
 
@@ -472,42 +489,46 @@ extern time_t user_XTime(time_t *timer);
 /* ------------------------------------------------------------------------- */
 /* Allows override of all standard library functions */
 #undef STRING_USER
-#define STRING_USER
+#if 1
+    #define STRING_USER
 
-#include <string.h>
-#include <stdio.h>
+    #include <string.h>
 
-#undef  USE_WOLF_STRSEP
-#define USE_WOLF_STRSEP
-#define XSTRSEP(s1,d)     wc_strsep((s1),(d))
+    #undef  USE_WOLF_STRSEP
+    #define USE_WOLF_STRSEP
+    #define XSTRSEP(s1,d)     wc_strsep((s1),(d))
 
-#undef  USE_WOLF_STRTOK
-#define USE_WOLF_STRTOK
-#define XSTRTOK(s1,d,ptr) wc_strtok((s1),(d),(ptr))
+    #undef  USE_WOLF_STRTOK
+    #define USE_WOLF_STRTOK
+    #define XSTRTOK(s1,d,ptr) wc_strtok((s1),(d),(ptr))
 
-#define XSTRNSTR(s1,s2,n) strnstr((s1),(s2),(n))
+    #define XSTRNSTR(s1,s2,n) strnstr((s1),(s2),(n))
 
-#define XMEMCPY(d,s,l)    memcpy((d),(s),(l))
-#define XMEMSET(b,c,l)    memset((b),(c),(l))
-#define XMEMCMP(s1,s2,n)  memcmp((s1),(s2),(n))
-#define XMEMMOVE(d,s,l)   memmove((d),(s),(l))
+    #define XMEMCPY(d,s,l)    memcpy((d),(s),(l))
+    #define XMEMSET(b,c,l)    memset((b),(c),(l))
+    #define XMEMCMP(s1,s2,n)  memcmp((s1),(s2),(n))
+    #define XMEMMOVE(d,s,l)   memmove((d),(s),(l))
 
-#define XSTRLEN(s1)       strlen((s1))
-#define XSTRNCPY(s1,s2,n) strncpy((s1),(s2),(n))
-#define XSTRSTR(s1,s2)    strstr((s1),(s2))
+    #define XSTRLEN(s1)       strlen((s1))
+    #define XSTRNCPY(s1,s2,n) strncpy((s1),(s2),(n))
+    #define XSTRSTR(s1,s2)    strstr((s1),(s2))
 
-#define XSTRNCMP(s1,s2,n)     strncmp((s1),(s2),(n))
-#define XSTRNCAT(s1,s2,n)     strncat((s1),(s2),(n))
-#define XSTRNCASECMP(s1,s2,n) strncasecmp((s1),(s2),(n))
+    #define XSTRNCMP(s1,s2,n)     strncmp((s1),(s2),(n))
+    #define XSTRNCAT(s1,s2,n)     strncat((s1),(s2),(n))
+    #define XSTRNCASECMP(s1,s2,n) strncasecmp((s1),(s2),(n))
 
-#define XSNPRINTF snprintf
+    #define XPRINTF   printf
+    #define XSNPRINTF snprintf
+#endif
 
 
 /* ------------------------------------------------------------------------- */
 /* Enable Features */
 /* ------------------------------------------------------------------------- */
 #undef WOLFSSL_TLS13
-#define WOLFSSL_TLS13
+#if 1
+    #define WOLFSSL_TLS13
+#endif
 
 #undef WOLFSSL_KEY_GEN
 #if 0
@@ -576,6 +597,9 @@ extern time_t user_XTime(time_t *timer);
 
 #undef  NO_DEV_RANDOM
 #define NO_DEV_RANDOM
+
+#undef  NO_WOLFSSL_DIR
+#define NO_WOLFSSL_DIR
 
 #undef  NO_DSA
 #define NO_DSA
