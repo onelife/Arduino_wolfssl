@@ -1,6 +1,6 @@
 # Arduino wolfSSL Library
 
-The library is modified from wolfSSL Release 4.7.0 for Arduino platform.
+The library is modified from wolfSSL Release 5.5.4 for Arduino platform.
 
 
 # wolfSSL Embedded SSL/TLS Library
