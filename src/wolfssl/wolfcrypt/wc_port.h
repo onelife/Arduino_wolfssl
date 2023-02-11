@@ -913,6 +913,14 @@ WOLFSSL_ABI WOLFSSL_API int wolfCrypt_Cleanup(void);
 
     /* definitions are in linuxkm/linuxkm_wc_port.h */
 
+#elif defined(ARDUINO_WOLFSSL)
+    #ifndef XTIME
+        #error Please set "XTIME"
+    #endif
+    #ifdef HAL_RTC_MODULE_ENABLED
+        #undef HAL_RTC_MODULE_ENABLED
+    #endif
+
 #elif defined(HAL_RTC_MODULE_ENABLED)
     #include <time.h>
     WOLFSSL_LOCAL time_t* stm32_hal_time(time_t* t1);

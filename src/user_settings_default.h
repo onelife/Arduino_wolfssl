@@ -446,14 +446,14 @@ extern "C" {
 /* Port */
 /* ------------------------------------------------------------------------- */
 
+#include <time.h>
 /* Override Current Time */
 /* Allows custom "custom_time()" function to be used for benchmark */
-#include <time.h>  /* for time_t */
 #define WOLFSSL_USER_CURRTIME
 #define WOLFSSL_GMTIME
 #define USER_TICKS
-extern time_t user_XTime(time_t *timer);
-#define XTIME user_XTime
+extern time_t user_xtime(time_t *timer);
+#define XTIME user_xtime
 
 
 /* ------------------------------------------------------------------------- */
@@ -487,39 +487,7 @@ extern time_t user_XTime(time_t *timer);
 /* ------------------------------------------------------------------------- */
 /* Custom Standard Lib */
 /* ------------------------------------------------------------------------- */
-/* Allows override of all standard library functions */
-#undef STRING_USER
-#if 1
-    #define STRING_USER
-
-    #include <string.h>
-
-    #undef  USE_WOLF_STRSEP
-    #define USE_WOLF_STRSEP
-    #define XSTRSEP(s1,d)     wc_strsep((s1),(d))
-
-    #undef  USE_WOLF_STRTOK
-    #define USE_WOLF_STRTOK
-    #define XSTRTOK(s1,d,ptr) wc_strtok((s1),(d),(ptr))
-
-    #define XSTRNSTR(s1,s2,n) strnstr((s1),(s2),(n))
-
-    #define XMEMCPY(d,s,l)    memcpy((d),(s),(l))
-    #define XMEMSET(b,c,l)    memset((b),(c),(l))
-    #define XMEMCMP(s1,s2,n)  memcmp((s1),(s2),(n))
-    #define XMEMMOVE(d,s,l)   memmove((d),(s),(l))
-
-    #define XSTRLEN(s1)       strlen((s1))
-    #define XSTRNCPY(s1,s2,n) strncpy((s1),(s2),(n))
-    #define XSTRSTR(s1,s2)    strstr((s1),(s2))
-
-    #define XSTRNCMP(s1,s2,n)     strncmp((s1),(s2),(n))
-    #define XSTRNCAT(s1,s2,n)     strncat((s1),(s2),(n))
-    #define XSTRNCASECMP(s1,s2,n) strncasecmp((s1),(s2),(n))
-
-    #define XPRINTF   printf
-    #define XSNPRINTF snprintf
-#endif
+#define XPRINTF   printf
 
 
 /* ------------------------------------------------------------------------- */

@@ -1665,25 +1665,28 @@ static void bench_stats_sym_finish(const char* desc, int useDeviceID, int count,
             persec /= base2 ? (1024. * 1024.) : (1000. * 1000.);
 #ifdef GENERATE_MACHINE_PARSEABLE_REPORT
         /* note this codepath brings in all the fields from the non-CSV case. */
-        (void)XSNPRINTF(msg, sizeof(msg), "sym,%s,%s,%lu,%f,%f,%lu,", desc,
-                        BENCH_DEVID_GET_NAME(useDeviceID),
-                        bytes_processed, total, persec, total_cycles);
+        (void)XSNPRINTF(msg, sizeof(msg), "sym,%s,%s,%lu,%d.%03d,%d.%03d,%lu,", desc,
+                        BENCH_DEVID_GET_NAME(useDeviceID), bytes_processed,
+                        (int)total, (int)((total - (int)total) * 1000),
+                        (int)persec, (int)((persec - (int)persec) * 1000), total_cycles);
 #else
-        (void)XSNPRINTF(msg, sizeof(msg), "%s,%f,", desc, persec);
+        (void)XSNPRINTF(msg, sizeof(msg), "%s,%d.%03d,", desc, (int)persec, (int)((persec - (int)persec) * 1000));
 #endif
         SHOW_INTEL_CYCLES_CSV(msg, sizeof(msg), countSz);
     } else {
 #ifdef GENERATE_MACHINE_PARSEABLE_REPORT
         (void)XSNPRINTF(msg, sizeof(msg),
-                 "%-24s%s %5.0f %s %s %5.3f %s, %8.3f %s/s"
+                 "%-24s%s %5d %s %s %d.%03d %s, %d.%03d %s/s"
                  ", %lu cycles,",
-                 desc, BENCH_DEVID_GET_NAME(useDeviceID), blocks, blockType,
-                 word[0], total, word[1], persec, blockType, total_cycles);
+                 desc, BENCH_DEVID_GET_NAME(useDeviceID), (int)blocks, blockType, word[0],
+                 (int)total, (int)((total - (int)total) * 1000), word[1],
+                 (int)persec, (int)((persec - (int)persec) * 1000), blockType, total_cycles);
 #else
         (void)XSNPRINTF(msg, sizeof(msg),
-                 "%-24s%s %5.0f %s %s %5.3f %s, %8.3f %s/s",
-                 desc, BENCH_DEVID_GET_NAME(useDeviceID), blocks, blockType,
-                 word[0], total, word[1], persec, blockType);
+                 "%-24s%s %d %s %s %d.%03d %s, %d.%03d %s/s",
+                 desc, BENCH_DEVID_GET_NAME(useDeviceID), (int)blocks, blockType,
+                 word[0], (int)total, (int)((total - (int)total) * 1000), word[1],
+                 (int)persec, (int)((persec - (int)persec) * 1000), blockType);
 #endif
         SHOW_INTEL_CYCLES(msg, sizeof(msg), countSz);
     }
@@ -2668,8 +2671,9 @@ int benchmark_init(void)
     wolfSSL_Debugging_ON();
 #endif
 
-    printf("%swolfCrypt Benchmark (block bytes %d, min %.1f sec each)\n",
-           info_prefix, (int)bench_size, BENCH_MIN_RUNTIME_SEC);
+    printf("%swolfCrypt Benchmark (block bytes %d, min %d.%01d sec each)\n",
+           info_prefix, (int)bench_size,
+           (int)BENCH_MIN_RUNTIME_SEC, (int)((BENCH_MIN_RUNTIME_SEC - (int)BENCH_MIN_RUNTIME_SEC) * 10));
 #ifndef GENERATE_MACHINE_PARSEABLE_REPORT
     if (csv_format == 1) {
         printf("This format allows you to easily copy the output to a csv file.");
