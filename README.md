@@ -1,3 +1,6 @@
+# The project is archived. Please move to the official [wolfSSL Arduino Library](https://github.com/wolfSSL/Arduino-wolfSSL/).
+---
+
 # Arduino wolfSSL Library
 
 The library is modified from wolfSSL Release 5.5.4 for Arduino platform.
